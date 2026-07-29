@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-maroon: #7A2320;
+  --color-maroon-deep: #4E1512;
+  --color-gold: #C69214;
+  --color-gold-light: #E6C878;
+  --color-jade: #2F5D50;
+  --color-ivory: #F3ECDD;
+  --color-ink: #2B2420;
+  --color-ink-soft: #5A4F45;
+
+  --font-display: "Noto Serif TC", serif;
+  --font-body: "Noto Sans TC", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  line-height: 1.75;
+}
