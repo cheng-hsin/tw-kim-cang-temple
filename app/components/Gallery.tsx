@@ -2,9 +2,19 @@ import Image from "next/image";
 import { T } from "./LanguageContext";
 import { content } from "../data/content";
 import { resolveSlotImage } from "../lib/imageSlots";
+import Lightbox from "./Lightbox";
 
 export default function Gallery() {
   const { gallery } = content;
+  const items = gallery.items.map((g, i) => ({
+    ...g,
+    src: resolveSlotImage(`gallery-${i + 1}`),
+  }));
+  // 放大時左右按鈕只在已上傳的照片之間切換,略過還沒上傳的佔位格。
+  const lightboxImages = items
+    .filter((g) => g.src)
+    .map((g) => ({ src: g.src, alt: `${g.caption.vi} / ${g.caption.zh}` }));
+
   return (
     <section id="hinh-anh" className="mx-auto max-w-4xl px-6 pb-16">
       <div className="mb-2.5 text-[13px] font-bold uppercase tracking-[2px] text-gold">
@@ -15,15 +25,16 @@ export default function Gallery() {
       </h2>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {gallery.items.map((g, i) => {
-          const src = resolveSlotImage(`gallery-${i + 1}`);
-          return src ? (
-            <div
+        {items.map((g, i) =>
+          g.src ? (
+            <Lightbox
               key={i}
-              className="relative aspect-square overflow-hidden rounded-xl"
+              images={lightboxImages}
+              startIndex={lightboxImages.findIndex((img) => img.src === g.src)}
+              className="relative aspect-square cursor-zoom-in overflow-hidden rounded-xl"
             >
               <Image
-                src={src}
+                src={g.src}
                 alt={`${g.caption.vi} / ${g.caption.zh}`}
                 fill
                 sizes="(max-width: 640px) 50vw, 33vw"
@@ -32,7 +43,7 @@ export default function Gallery() {
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-center text-xs font-medium text-white">
                 <T vi={g.caption.vi} zh={g.caption.zh} />
               </div>
-            </div>
+            </Lightbox>
           ) : (
             <div
               key={i}
@@ -40,8 +51,8 @@ export default function Gallery() {
             >
               <T vi={g.caption.vi} zh={g.caption.zh} />
             </div>
-          );
-        })}
+          )
+        )}
       </div>
     </section>
   );
