@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import { commitFileBestEffort, deleteFileBestEffort } from "./github";
 
 // 電子經書清單:標題/簡介存在 JSON 檔裡,PDF / EPUB 檔案存在 public/ebooks/<id>.pdf|epub。
 // 判斷「有沒有檔案」的方式跟 imageSlots.ts 一樣:直接看檔案在不在,不用另外存旗標,
@@ -21,6 +22,7 @@ export type EbookFileKind = "pdf" | "epub";
 
 const EBOOKS_DIR = path.join(process.cwd(), "public", "ebooks");
 const STORE_FILE = path.join(process.cwd(), "app", "data", "ebooks-store.json");
+const STORE_REPO_PATH = "app/data/ebooks-store.json";
 
 const DEFAULT_EBOOKS: EbookMeta[] = [
   {
@@ -62,12 +64,20 @@ function readStore(): EbookMeta[] {
 }
 
 function writeStore(list: EbookMeta[]): void {
+  const json = JSON.stringify(list, null, 2);
   fs.mkdirSync(path.dirname(STORE_FILE), { recursive: true });
-  fs.writeFileSync(STORE_FILE, JSON.stringify(list, null, 2));
+  fs.writeFileSync(STORE_FILE, json);
+  // 清單本身也備份到 GitHub,不然重新部署後新增/刪除的電子書紀錄會消失,
+  // 就算 PDF/EPUB 檔案本身有備份也對不到。不等它完成,失敗只印 log。
+  void commitFileBestEffort(STORE_REPO_PATH, Buffer.from(json), "更新電子書清單");
 }
 
 function ebookFilePath(id: string, kind: EbookFileKind): string {
   return path.join(EBOOKS_DIR, `${id}.${kind}`);
+}
+
+function ebookRepoPath(id: string, kind: EbookFileKind): string {
+  return `public/ebooks/${id}.${kind}`;
 }
 
 function resolveEbookFile(id: string, kind: EbookFileKind): string {
@@ -107,20 +117,22 @@ export function deleteEbook(id: string): boolean {
   if (next.length === list.length) return false;
 
   writeStore(next);
-  removeEbookFile(id, "pdf");
-  removeEbookFile(id, "epub");
+  void removeEbookFile(id, "pdf");
+  void removeEbookFile(id, "epub");
   return true;
 }
 
-export function saveEbookFile(id: string, kind: EbookFileKind, buffer: Buffer): void {
+export async function saveEbookFile(id: string, kind: EbookFileKind, buffer: Buffer): Promise<void> {
   fs.mkdirSync(EBOOKS_DIR, { recursive: true });
   fs.writeFileSync(ebookFilePath(id, kind), buffer);
+  await commitFileBestEffort(ebookRepoPath(id, kind), buffer, `上傳電子書檔案:${id}.${kind}`);
 }
 
-export function removeEbookFile(id: string, kind: EbookFileKind): void {
+export async function removeEbookFile(id: string, kind: EbookFileKind): Promise<void> {
   const file = ebookFilePath(id, kind);
   if (fs.existsSync(file)) {
     fs.unlinkSync(file);
+    await deleteFileBestEffort(ebookRepoPath(id, kind), `刪除電子書檔案:${id}.${kind}`);
   }
 }
 

@@ -1,6 +1,5 @@
-import fs from "node:fs";
 import { NextRequest, NextResponse } from "next/server";
-import { SLOT_KEYS, clearSlotImage, slotFilePath } from "../../../lib/imageSlots";
+import { SLOT_KEYS, saveSlotImage } from "../../../lib/imageSlots";
 import { COOKIE_NAME, verifySessionToken } from "../../../lib/session";
 
 export const dynamic = "force-dynamic";
@@ -72,8 +71,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "只接受 JPG / PNG / WEBP / GIF 圖片" }, { status: 400 });
   }
 
-  clearSlotImage(key);
-  fs.writeFileSync(slotFilePath(key, ext), buffer);
+  await saveSlotImage(key, ext, buffer);
 
   return NextResponse.json({ ok: true });
 }
