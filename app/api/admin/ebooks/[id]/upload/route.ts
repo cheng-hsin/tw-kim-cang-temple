@@ -40,7 +40,7 @@ export async function POST(request: NextRequest, context: Context) {
     return NextResponse.json({ error: "只接受 PDF 或 EPUB 檔案" }, { status: 400 });
   }
 
-  saveEbookFile(id, kind, buffer);
+  await saveEbookFile(id, kind, buffer);
 
   return NextResponse.json({ ok: true, kind });
 }
@@ -61,6 +61,6 @@ export async function DELETE(request: NextRequest, context: Context) {
     return NextResponse.json({ error: "不明的檔案類型" }, { status: 400 });
   }
 
-  removeEbookFile(id, kind);
+  await removeEbookFile(id, kind);
   return NextResponse.json({ ok: true });
 }

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { commitFileBestEffort, deleteFileBestEffort } from "./github";
 
 // 「圖片欄位」清單:網站上每一張可以在後台上傳更換的照片,都有一個固定的 key。
 // 上傳時不管副檔名是什麼,都會存成 public/images/<key>.<副檔名>,
@@ -44,16 +45,29 @@ export function resolveSlotImage(key: string): string {
   return "";
 }
 
+function slotRepoPath(key: string, ext: string): string {
+  return `public/images/${key}.${ext}`;
+}
+
 // 上傳新圖片前,先把這個欄位舊的檔案(不管副檔名)都刪掉,避免新舊檔案同時存在造成顯示錯亂。
-export function clearSlotImage(key: string): void {
+// 本機跟 GitHub 備份都要一起清,不然舊副檔名的檔案會留在 repo 裡。
+async function clearSlotImage(key: string): Promise<void> {
   for (const ext of ALLOWED_EXTENSIONS) {
     const file = path.join(IMAGES_DIR, `${key}.${ext}`);
     if (fs.existsSync(file)) {
       fs.unlinkSync(file);
+      await deleteFileBestEffort(slotRepoPath(key, ext), `刪除圖片:${key}.${ext}`);
     }
   }
 }
 
 export function slotFilePath(key: string, ext: string): string {
   return path.join(IMAGES_DIR, `${key}.${ext}`);
+}
+
+// 寫入本機檔案(讓網站馬上看得到新圖片),同時把新檔案備份到 GitHub。
+export async function saveSlotImage(key: string, ext: string, buffer: Buffer): Promise<void> {
+  await clearSlotImage(key);
+  fs.writeFileSync(slotFilePath(key, ext), buffer);
+  await commitFileBestEffort(slotRepoPath(key, ext), buffer, `上傳圖片:${key}.${ext}`);
 }
