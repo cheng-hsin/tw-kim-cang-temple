@@ -71,7 +71,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "只接受 JPG / PNG / WEBP / GIF 圖片" }, { status: 400 });
   }
 
-  await saveSlotImage(key, ext, buffer);
+  const saved = await saveSlotImage(key, ext, buffer);
+  if (!saved) {
+    return NextResponse.json(
+      { error: "上傳失敗:伺服器檔案系統無法寫入,且未設定 GITHUB_TOKEN 備份,請聯絡管理員設定" },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }

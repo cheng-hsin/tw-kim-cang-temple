@@ -49,13 +49,33 @@ function slotRepoPath(key: string, ext: string): string {
   return `public/images/${key}.${ext}`;
 }
 
+// 正式站(例如 Vercel)執行階段的檔案系統是唯讀的,寫入一定會丟例外;
+// 本機開發時檔案系統可以寫,所以這裡失敗只印 log、不往外丟,讓呼叫端改用 GitHub 備份當作真正的持久化。
+function tryUnlinkLocal(filePath: string): void {
+  try {
+    fs.unlinkSync(filePath);
+  } catch (err) {
+    console.error(`[imageSlots] 刪除本機檔案失敗(正式站唯讀檔案系統下是正常現象):`, err);
+  }
+}
+
+function tryWriteLocal(filePath: string, buffer: Buffer): boolean {
+  try {
+    fs.writeFileSync(filePath, buffer);
+    return true;
+  } catch (err) {
+    console.error(`[imageSlots] 寫入本機檔案失敗(正式站唯讀檔案系統下是正常現象):`, err);
+    return false;
+  }
+}
+
 // 上傳新圖片前,先把這個欄位舊的檔案(不管副檔名)都刪掉,避免新舊檔案同時存在造成顯示錯亂。
 // 本機跟 GitHub 備份都要一起清,不然舊副檔名的檔案會留在 repo 裡。
 async function clearSlotImage(key: string): Promise<void> {
   for (const ext of ALLOWED_EXTENSIONS) {
     const file = path.join(IMAGES_DIR, `${key}.${ext}`);
     if (fs.existsSync(file)) {
-      fs.unlinkSync(file);
+      tryUnlinkLocal(file);
       await deleteFileBestEffort(slotRepoPath(key, ext), `刪除圖片:${key}.${ext}`);
     }
   }
@@ -65,9 +85,11 @@ export function slotFilePath(key: string, ext: string): string {
   return path.join(IMAGES_DIR, `${key}.${ext}`);
 }
 
-// 寫入本機檔案(讓網站馬上看得到新圖片),同時把新檔案備份到 GitHub。
-export async function saveSlotImage(key: string, ext: string, buffer: Buffer): Promise<void> {
+// 寫入本機檔案(能寫就寫,讓網站馬上看得到新圖片),同時把新檔案備份到 GitHub。
+// 回傳值:只要本機寫入或 GitHub 備份「其中一個」成功就算真的存下來了;兩個都失敗代表上傳沒有留下任何痕跡。
+export async function saveSlotImage(key: string, ext: string, buffer: Buffer): Promise<boolean> {
   await clearSlotImage(key);
-  fs.writeFileSync(slotFilePath(key, ext), buffer);
-  await commitFileBestEffort(slotRepoPath(key, ext), buffer, `上傳圖片:${key}.${ext}`);
+  const localOk = tryWriteLocal(slotFilePath(key, ext), buffer);
+  const githubOk = await commitFileBestEffort(slotRepoPath(key, ext), buffer, `上傳圖片:${key}.${ext}`);
+  return localOk || githubOk;
 }
