@@ -1,6 +1,6 @@
-# Chùa Kim Cang 金剛寺 — Demo 網站
+# Chùa Kim Cang 金剛寺
 
-用 Next.js + Tailwind CSS 打造的越南佛寺一頁式 demo 網站,雙語(越南文 / 中文)切換。
+Chùa Việt Nam tại Đài Loan, thường xuyên tổ chức các khóa lễ, tụng kinh, thiền tập và các hoạt động Phật học, kính chào quý Phật tử đến lễ Phật, cùng tu học và giao lưu.
 
 ## 如何啟動(本機開發)
 
