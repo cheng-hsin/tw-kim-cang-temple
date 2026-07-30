@@ -5,7 +5,7 @@ export const content = {
   brand: { vi: "Chùa Kim Cang", zh: "金剛寺" },
 
   hero: {
-    eyebrow: { vi: "CHÙA PHẬT GIÁO VIỆT NAM TẠI ĐÀI LOAN", zh: "台灣越南佛教寺院" },
+    eyebrow: { vi: "CHÙA PHẬT GIÁO VIỆT NAM TẠI ĐÀI LOAN", zh: "越南寺院在台灣" },
     name: { vi: "Chùa Kim Cang", zh: "金剛寺" },
     tagline: {
       vi: "Nơi bình an cho cộng đồng người Việt tại Đài Loan — mở cửa đón tiếp mọi người đến lễ Phật, cầu an và sinh hoạt cộng đồng.",
@@ -13,6 +13,8 @@ export const content = {
     },
     ctaPrimary: { vi: "Xem địa chỉ & giờ mở cửa", zh: "查看地址與開放時間" },
     ctaSecondary: { vi: "Theo dõi Facebook", zh: "追蹤 Facebook" },
+    // 背景照片改由後台上傳管理(見 app/lib/imageSlots.ts 的 "hero" 欄位),
+    // 沒有上傳照片時會自動顯示原本的漸層底色。
   },
 
   about: {
@@ -39,22 +41,48 @@ export const content = {
   events: {
     label: { vi: "Lịch pháp hội", zh: "法會行事曆" },
     title: { vi: "Hoạt động sắp tới", zh: "近期活動" },
-    // 實際的活動內容在 app/data/events.ts,這裡只保留標題文字
+    intro: {
+      vi: "Xem lịch hoạt động cả năm trong hình bên dưới.",
+      zh: "全年活動請參考下方行事曆圖片。",
+    },
+    // 年曆圖片改由後台上傳管理(見 app/lib/imageSlots.ts 的 "calendar" 欄位),
+    // 沒有上傳圖片時會自動顯示下面這句提示。
+    comingSoon: { vi: "Lịch hoạt động đang được cập nhật", zh: "活動年曆製作中,敬請期待" },
+    // 活動輪播:圖片同樣改由後台上傳管理("carousel-1" ~ "carousel-5" 欄位),
+    // 這裡只保留每張的顏色佔位跟標題文字;沒上傳照片時會顯示色塊佔位。
+    carousel: [
+      { color: "bg-maroon", caption: { vi: "Tết Nguyên Đán", zh: "農曆春節" } },
+      { color: "bg-gold text-maroon-deep", caption: { vi: "Lễ Phật Đản", zh: "浴佛節" } },
+      { color: "bg-jade", caption: { vi: "Lễ Vu Lan Báo Hiếu", zh: "盂蘭盆節" } },
+      { color: "bg-maroon", caption: { vi: "Tết Trung Thu", zh: "中秋節" } },
+      { color: "bg-gold text-maroon-deep", caption: { vi: "Khoá tu định kỳ hàng tháng", zh: "每月共修日" } },
+    ],
   },
 
   gallery: {
     label: { vi: "Hình ảnh", zh: "寺院相簿" },
     title: { vi: "Không gian chùa", zh: "環境空間" },
-    // src 留空 = 顯示色塊佔位;填入檔名(例如 "/images/chanh-dien.jpg")= 顯示真實照片
-    // 照片請放進 public/images/ 資料夾裡,檔名跟這裡填的要一致
+    // 照片改由後台上傳管理("gallery-1" ~ "gallery-6" 欄位,依照下面的順序對應);
+    // 這裡只保留每張沒有照片時的色塊佔位跟標題文字。
     items: [
-      { src: "", color: "bg-maroon", caption: { vi: "Chánh điện", zh: "大殿" } },
-      { src: "", color: "bg-jade", caption: { vi: "Sân chùa", zh: "寺院庭院" } },
-      { src: "", color: "bg-gold text-maroon-deep", caption: { vi: "Lễ Phật Đản", zh: "浴佛節" } },
-      { src: "", color: "bg-gold text-maroon-deep", caption: { vi: "Bếp chay", zh: "素食廚房" } },
-      { src: "", color: "bg-jade", caption: { vi: "Tượng Phật", zh: "佛像" } },
-      { src: "", color: "bg-maroon", caption: { vi: "Sinh hoạt cộng đồng", zh: "社群活動" } },
+      { color: "bg-maroon", caption: { vi: "Chánh điện", zh: "大殿" } },
+      { color: "bg-jade", caption: { vi: "Sân chùa", zh: "寺院庭院" } },
+      { color: "bg-gold text-maroon-deep", caption: { vi: "Lễ Phật Đản", zh: "浴佛節" } },
+      { color: "bg-gold text-maroon-deep", caption: { vi: "Bếp chay", zh: "素食廚房" } },
+      { color: "bg-jade", caption: { vi: "Tượng Phật", zh: "佛像" } },
+      { color: "bg-maroon", caption: { vi: "Sinh hoạt cộng đồng", zh: "社群活動" } },
     ],
+  },
+
+  ebooks: {
+    label: { vi: "Thư viện", zh: "電子書專區" },
+    title: { vi: "Kinh sách điện tử", zh: "電子書專區" },
+    intro: {
+      vi: "Tải về miễn phí kinh sách dạng PDF và EPUB để tụng đọc mọi lúc, mọi nơi.",
+      zh: "免費下載 PDF、EPUB 電子經書,隨時隨地閱讀共修。",
+    },
+    comingSoon: { vi: "Sắp ra mắt", zh: "即將上線" },
+    backHome: { vi: "Về trang chủ", zh: "回首頁" },
   },
 
   faq: {

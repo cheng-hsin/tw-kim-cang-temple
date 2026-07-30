@@ -1,0 +1,35 @@
+[
+  {
+    "id": "kinh-a-di-da",
+    "title": {
+      "vi": "Kinh A Di Đà",
+      "zh": "阿彌陀經"
+    },
+    "description": {
+      "vi": "Bản kinh song ngữ Việt – Hán, dùng để tụng niệm hằng ngày.",
+      "zh": "越漢雙語經文,適合日常課誦使用。"
+    }
+  },
+  {
+    "id": "kinh-vu-lan-bao-hieu",
+    "title": {
+      "vi": "Kinh Vu Lan Báo Hiếu",
+      "zh": "盂蘭盆經"
+    },
+    "description": {
+      "vi": "Kinh về công ơn cha mẹ, thường tụng vào mùa Vu Lan.",
+      "zh": "闡述孝道與報恩,盂蘭盆法會常用經文。"
+    }
+  },
+  {
+    "id": "chu-dai-bi",
+    "title": {
+      "vi": "Chú Đại Bi",
+      "zh": "大悲咒"
+    },
+    "description": {
+      "vi": "Thần chú của Bồ Tát Quán Thế Âm, kèm phiên âm Việt – Hán.",
+      "zh": "觀世音菩薩神咒,附越南語拼音對照。"
+    }
+  }
+]

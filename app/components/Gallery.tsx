@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { T } from "./LanguageContext";
 import { content } from "../data/content";
+import { resolveSlotImage } from "../lib/imageSlots";
 
 export default function Gallery() {
   const { gallery } = content;
@@ -14,14 +15,15 @@ export default function Gallery() {
       </h2>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {gallery.items.map((g, i) =>
-          g.src ? (
+        {gallery.items.map((g, i) => {
+          const src = resolveSlotImage(`gallery-${i + 1}`);
+          return src ? (
             <div
               key={i}
               className="relative aspect-square overflow-hidden rounded-xl"
             >
               <Image
-                src={g.src}
+                src={src}
                 alt={`${g.caption.vi} / ${g.caption.zh}`}
                 fill
                 sizes="(max-width: 640px) 50vw, 33vw"
@@ -38,8 +40,8 @@ export default function Gallery() {
             >
               <T vi={g.caption.vi} zh={g.caption.zh} />
             </div>
-          )
-        )}
+          );
+        })}
       </div>
     </section>
   );
