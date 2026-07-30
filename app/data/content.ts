@@ -119,7 +119,7 @@ export const content = {
   },
 
   footer: {
-    vi: "© 2026 Chùa Từ Bi — Trang demo, chỉ dùng để tham khảo",
-    zh: "© 2026 金剛寺 — 示範網站,僅供參考用途",
+    vi: "© 2026 Chùa Kim Cang",
+    zh: "© 2026 金剛寺",
   },
 };
