@@ -3,6 +3,7 @@ import { T } from "./LanguageContext";
 import { content } from "../data/content";
 import { resolveSlotImage } from "../lib/imageSlots";
 import EventCarousel from "./EventCarousel";
+import Lightbox from "./Lightbox";
 
 export default function Events() {
   const { events } = content;
@@ -26,10 +27,9 @@ export default function Events() {
 
       <div className="grid gap-6 sm:grid-cols-2">
         {calendarImage ? (
-          <a
-            href={calendarImage}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Lightbox
+            images={[{ src: calendarImage, alt: `${events.title.vi} / ${events.title.zh}` }]}
+            startIndex={0}
             className="group relative mx-auto aspect-[3/4] w-full max-w-md cursor-zoom-in overflow-hidden rounded-2xl border border-[#E3D8BF] bg-white"
           >
             <Image
@@ -39,7 +39,7 @@ export default function Events() {
               sizes="(max-width: 640px) 100vw, 448px"
               className="object-contain transition group-hover:scale-[1.03]"
             />
-          </a>
+          </Lightbox>
         ) : (
           <div className="mx-auto flex aspect-[3/4] w-full max-w-md items-center justify-center rounded-2xl bg-gradient-to-br from-maroon to-maroon-deep p-6 text-center text-sm font-medium text-ivory">
             <T vi={events.comingSoon.vi} zh={events.comingSoon.zh} />

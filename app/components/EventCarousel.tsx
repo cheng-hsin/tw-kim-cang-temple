@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { T } from "./LanguageContext";
+import Lightbox from "./Lightbox";
 
 type Slide = {
   image: string;
@@ -12,17 +13,23 @@ type Slide = {
 
 export default function EventCarousel({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
-    if (slides.length <= 1) return;
+    // 放大檢視開著的時候暫停自動輪播,不然背景圖片一直換,放大畫面也會跟著跳掉。
+    if (slides.length <= 1 || lightboxOpen) return;
     const id = setInterval(() => {
       setIndex((i) => (i + 1) % slides.length);
     }, 4000);
     return () => clearInterval(id);
-  }, [slides.length]);
+  }, [slides.length, lightboxOpen]);
 
   if (slides.length === 0) return null;
   const slide = slides[index];
+
+  const lightboxImages = slides
+    .filter((s) => s.image)
+    .map((s) => ({ src: s.image, alt: `${s.caption.vi} / ${s.caption.zh}` }));
 
   function goPrev() {
     setIndex((i) => (i - 1 + slides.length) % slides.length);
@@ -35,12 +42,11 @@ export default function EventCarousel({ slides }: { slides: Slide[] }) {
   return (
     <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-2xl border border-[#E3D8BF]">
       {slide.image ? (
-        <a
-          key={index}
-          href={slide.image}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group absolute inset-0 block cursor-zoom-in"
+        <Lightbox
+          images={lightboxImages}
+          startIndex={lightboxImages.findIndex((img) => img.src === slide.image)}
+          className="group absolute inset-0 cursor-zoom-in"
+          onOpenChange={setLightboxOpen}
         >
           <Image
             src={slide.image}
@@ -49,10 +55,7 @@ export default function EventCarousel({ slides }: { slides: Slide[] }) {
             sizes="(max-width: 640px) 100vw, 448px"
             className="object-cover transition group-hover:scale-[1.03]"
           />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 pt-8 text-center text-sm font-medium text-white">
-            <T vi={slide.caption.vi} zh={slide.caption.zh} />
-          </div>
-        </a>
+        </Lightbox>
       ) : (
         <div
           key={index}
