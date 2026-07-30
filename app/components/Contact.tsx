@@ -1,8 +1,9 @@
 import { T } from "./LanguageContext";
 import { content } from "../data/content";
+import Footer from "./Footer";
 
 export default function Contact() {
-  const { contact, footer } = content;
+  const { contact } = content;
   return (
     <>
       <section id="lien-he" className="bg-maroon px-6 py-16 text-center text-ivory">
@@ -38,9 +39,7 @@ export default function Contact() {
         </div>
       </section>
 
-      <footer className="bg-ivory px-6 py-6 text-center text-xs text-ink-soft">
-        <T vi={footer.vi} zh={footer.zh} />
-      </footer>
+      <Footer />
     </>
   );
 }

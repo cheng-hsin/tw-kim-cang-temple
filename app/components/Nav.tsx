@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLang, T } from "./LanguageContext";
 import { content } from "../data/content";
 
@@ -7,29 +8,35 @@ export default function Nav() {
   const { lang, toggle } = useLang();
   return (
     <nav className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-6 py-5">
-      <div className="font-display text-lg font-bold text-maroon">
+      <Link href="/" className="font-display text-lg font-bold text-maroon">
         {content.brand.vi} <span className="opacity-40">·</span> {content.brand.zh}
-      </div>
+      </Link>
 
       <div className="flex items-center gap-3.5 sm:gap-5">
-        <a
-          href="#le-hoi"
+        <Link
+          href="/#le-hoi"
           className="text-[13px] font-medium text-ink-soft transition hover:text-maroon sm:text-sm"
         >
           <T vi="Hoạt động" zh="近期活動" />
-        </a>
-        <a
-          href="#hinh-anh"
+        </Link>
+        <Link
+          href="/#hinh-anh"
           className="text-[13px] font-medium text-ink-soft transition hover:text-maroon sm:text-sm"
         >
           <T vi="Hình ảnh" zh="相簿" />
-        </a>
-        <a
-          href="#lien-he"
+        </Link>
+        <Link
+          href="/ebooks"
+          className="text-[13px] font-medium text-ink-soft transition hover:text-maroon sm:text-sm"
+        >
+          <T vi="Kinh sách điện tử" zh="電子書專區" />
+        </Link>
+        <Link
+          href="/#lien-he"
           className="text-[13px] font-medium text-ink-soft transition hover:text-maroon sm:text-sm"
         >
           <T vi="Liên hệ" zh="參拜資訊" />
-        </a>
+        </Link>
         <button
           onClick={toggle}
           aria-pressed={lang === "zh"}
